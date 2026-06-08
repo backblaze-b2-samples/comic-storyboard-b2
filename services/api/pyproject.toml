@@ -1,0 +1,33 @@
+[project]
+name = "comic-storyboard-b2-api"
+version = "0.1.0"
+description = "FastAPI backend for comic-storyboard-b2 — Genblaze-driven comic/storyboard generation persisted to Backblaze B2."
+requires-python = ">=3.11"
+dependencies = [
+    # Genblaze SDK — the point of this sample. Lower bounds pinned from the
+    # versions resolved at build time; no upper bound (the genblaze-* wheels
+    # internally cap at <0.4, so we don't re-cap them).
+    "genblaze-core>=0.3.2",
+    "genblaze-s3>=0.3.2",
+    "genblaze-replicate>=0.3.0",
+    # Story breaker — the one non-Genblaze AI call (Genblaze 0.3.x has no
+    # structured-text / forced-schema step; see docs/features/story-breaker.md).
+    "anthropic>=0.40",
+    # API surface
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "pydantic-settings>=2.0",
+    # Strip export — compose panels fetched from their durable public B2 URLs.
+    "pillow>=10.0",
+    "httpx>=0.24",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
