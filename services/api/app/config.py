@@ -17,7 +17,13 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     # --- Backblaze B2 (S3-compatible) ---
-    b2_endpoint: str
+    # B2_ENDPOINT is part of the standardized B2_* env set (parent repo standard),
+    # but genblaze-s3's S3StorageBackend.for_backblaze(...) derives the S3 endpoint
+    # internally from B2_REGION (https://s3.<region>.backblazeb2.com) and exposes no
+    # explicit endpoint override. So this field is OPTIONAL/informational here —
+    # keeping it required would force users to populate a no-op value. (See
+    # app/repo/storage.py, which passes region= only.)
+    b2_endpoint: str | None = None
     b2_region: str
     b2_application_key_id: str
     b2_application_key: str
