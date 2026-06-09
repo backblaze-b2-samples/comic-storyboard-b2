@@ -50,12 +50,12 @@ def create_storyboard(req: StoryRequest):
         api_key=s.anthropic_api_key,
         model=s.story_breaker_model,
     )
-    sink = storage.make_sink(s)
     try:
+        sink = storage.make_sink(s)
         run, manifest = pipelines.build_comic(
             script, sink, replicate_token=s.replicate_api_token
         )
-    except Exception as exc:  # surface provider/pipeline failures as 502
+    except Exception as exc:  # surface storage/provider/pipeline failures as 502
         raise HTTPException(status_code=502, detail=f"generation failed: {exc}") from exc
     return {"run": run, "manifest": manifest}
 
@@ -64,8 +64,8 @@ def create_storyboard(req: StoryRequest):
 def regenerate_panel(req: VariantRequest):
     """Re-roll a single panel as a child run carrying ``parent_run_id`` lineage."""
     s = get_settings()
-    sink = storage.make_sink(s)
     try:
+        sink = storage.make_sink(s)
         run, manifest = pipelines.regenerate_panel(
             req.parent_run_id,
             req.panel_prompt,
