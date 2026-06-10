@@ -26,8 +26,9 @@ jobs:
       - name: Run Python tests
         working-directory: services/api
         run: |
-          if find . -name "test_*.py" -o -name "*_test.py" | grep -q .; then
-            python -m pytest
+          if [ -d "tests" ] && find tests -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            uv pip install --system pytest
+            python -m pytest tests/
           else
             echo "No tests found — skipping. See issue #195 for test scaffolding work."
           fi
