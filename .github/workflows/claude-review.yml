@@ -59,9 +59,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Claude needs ANTHROPIC_API_KEY to run. This is the key that authenticates
-      # requests to the Anthropic API — without it Claude cannot read the PR diff,
-      # run the review checks, or post its findings as a comment.
+      # Why ANTHROPIC_API_KEY is required here:
+      # This step runs Claude (an AI model by Anthropic) to review the PR diff.
+      # Claude reads the changed files, checks them against B2 standards and
+      # security rules, and posts its findings as a PR comment. The API key is
+      # how Claude Code authenticates with Anthropic's API to do that work —
+      # without it the review step has no model to call and cannot run.
+      # This is separate from any B2 credentials — it has nothing to do with
+      # storage access, it only covers the AI review call itself.
+      #
       # To enable: add ANTHROPIC_API_KEY as a secret at
       # Settings → Secrets and variables → Actions → New repository secret.
       # Until the secret is configured this step is skipped gracefully — it does
