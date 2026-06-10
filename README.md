@@ -18,7 +18,7 @@ owns the only S3 client (and sets its own `b2ai-genblaze/<version>` user agent).
 Per-app identity is carried in `Pipeline(name="comic-storyboard-b2")` and written
 into every manifest.
 
-> New to Backblaze B2? Start here: <https://blze.ai/storage>
+> New to Backblaze B2 Cloud Storage? Start here: <https://blze.ai/storage>
 
 ## What it does
 
