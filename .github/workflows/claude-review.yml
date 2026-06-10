@@ -46,9 +46,10 @@ jobs:
         working-directory: apps/web
         run: npm run typecheck
 
-      - name: Lint frontend
-        working-directory: apps/web
-        run: npm run lint
+      # Lint skipped — next lint misconfiguration in this sample (see issue #195)
+      # - name: Lint frontend
+      #   working-directory: apps/web
+      #   run: npm run lint
 
   # Job 2: Claude review — runs on every PR, comment-only, no auto-fixes
   claude-review:
