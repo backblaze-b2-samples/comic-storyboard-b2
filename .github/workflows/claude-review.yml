@@ -1,0 +1,100 @@
+name: Claude Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  # Job 1: Static checks — runs on every PR, no credentials needed
+  ci-checks:
+    name: CI Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        working-directory: services/api
+        run: |
+          pip install uv
+          uv pip install --system -r requirements.txt
+
+      - name: Run Python tests
+        working-directory: services/api
+        run: |
+          if find . -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            python -m pytest
+          else
+            echo "No tests found — skipping. See issue #195 for test scaffolding work."
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install frontend dependencies
+        working-directory: apps/web
+        run: npm install
+
+      - name: Typecheck frontend
+        working-directory: apps/web
+        run: npm run typecheck
+
+      - name: Lint frontend
+        working-directory: apps/web
+        run: npm run lint
+
+  # Job 2: Claude review — runs on every PR, comment-only, no auto-fixes
+  claude-review:
+    name: Claude Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Claude review (all PRs)
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_bots: "claude[bot]"
+          use_sticky_comment: true
+          prompt: |
+            Review this pull request and post your findings as a single comment. Do not modify any files or create commits.
+
+            Run three checks and report each clearly:
+
+            ## 1. Code Review
+            Check for correctness bugs, unsafe assumptions, unhandled edge cases, missing error handling, and whether the code is simple enough for developers to learn from.
+
+            ## 2. B2 Standards
+            Check that the sample meets Backblaze B2 standards:
+            - S3-compatible API is used (not b2-native API calls like b2_upload_file, b2_authorize_account)
+            - Custom user agent is set on every S3 client via Config(user_agent_extra="...")
+            - Env vars use the standard names: B2_APPLICATION_KEY_ID, B2_APPLICATION_KEY, B2_BUCKET_NAME, B2_REGION, B2_ENDPOINT
+            - No real credentials committed anywhere (code, comments, tests, docs, screenshots)
+            - .env and generated files excluded via .gitignore
+
+            ## 3. Security
+            Check for exposed secrets, unsafe dependencies, missing input validation, unsafe logging, and overly broad auth scopes.
+
+            For each check: list findings with file:line references. If nothing to flag, say so explicitly.
+            End with a one-line summary: Ready to merge / Needs fixes / Needs human review.
+
+      - name: Claude verify (maintainer PRs only)
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_bots: "claude[bot]"
+          use_sticky_comment: true
+          prompt: |
+            Verify the main feature of this sample app still works after the changes in this PR.
+            Start the app, exercise the primary flow end-to-end, and report PASS or FAIL with evidence.
+            Do not modify any files or create commits.
