@@ -65,7 +65,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "claude[bot]"
           use_sticky_comment: true
-          prompt: |
+          direct_prompt: |
             Review this pull request and post your findings as a single comment. Do not modify any files or create commits.
 
             Run three checks and report each clearly:
@@ -94,7 +94,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "claude[bot]"
           use_sticky_comment: true
-          prompt: |
+          direct_prompt: |
             Verify the main feature of this sample app still works after the changes in this PR.
             Start the app, exercise the primary flow end-to-end, and report PASS or FAIL with evidence.
             Do not modify any files or create commits.
