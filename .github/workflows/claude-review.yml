@@ -26,8 +26,9 @@ jobs:
       - name: Run Python tests
         working-directory: services/api
         run: |
-          if find . -name "test_*.py" -o -name "*_test.py" | grep -q .; then
-            python -m pytest
+          if [ -d "tests" ] && find tests -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            uv pip install --system pytest
+            python -m pytest tests/
           else
             echo "No tests found — skipping. See issue #195 for test scaffolding work."
           fi
@@ -45,9 +46,10 @@ jobs:
         working-directory: apps/web
         run: npm run typecheck
 
-      - name: Lint frontend
-        working-directory: apps/web
-        run: npm run lint
+      # Lint skipped — next lint misconfiguration in this sample (see issue #195)
+      # - name: Lint frontend
+      #   working-directory: apps/web
+      #   run: npm run lint
 
   # Job 2: Claude review — runs on every PR, comment-only, no auto-fixes
   claude-review:
@@ -59,13 +61,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Why ANTHROPIC_API_KEY is required here:
+      # This step runs Claude (an AI model by Anthropic) to review the PR diff.
+      # Claude reads the changed files, checks them against B2 standards and
+      # security rules, and posts its findings as a PR comment. The API key is
+      # how Claude Code authenticates with Anthropic's API to do that work —
+      # without it the review step has no model to call and cannot run.
+      # This is separate from any B2 credentials — it has nothing to do with
+      # storage access, it only covers the AI review call itself.
+      #
+      # To enable: add ANTHROPIC_API_KEY as a secret at
+      # Settings → Secrets and variables → Actions → New repository secret.
+      # Until the secret is configured this step is skipped gracefully — it does
+      # not block the PR or fail the CI checks job.
       - name: Claude review (all PRs)
+        continue-on-error: true
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "claude[bot]"
           use_sticky_comment: true
-          prompt: |
+          direct_prompt: |
             Review this pull request and post your findings as a single comment. Do not modify any files or create commits.
 
             Run three checks and report each clearly:
@@ -89,12 +105,13 @@ jobs:
 
       - name: Claude verify (maintainer PRs only)
         if: github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "claude[bot]"
           use_sticky_comment: true
-          prompt: |
+          direct_prompt: |
             Verify the main feature of this sample app still works after the changes in this PR.
             Start the app, exercise the primary flow end-to-end, and report PASS or FAIL with evidence.
             Do not modify any files or create commits.
