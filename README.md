@@ -1,8 +1,5 @@
 # comic-storyboard-b2
 
-![Generate view](docs/images/screenshot-generate.png)
-![Panels view](docs/images/screenshot-panels.png)
-
 Describe a story in a sentence or two and get back a multi-panel comic /
 storyboard whose characters and settings stay consistent across panels — every
 generated frame persisted durably to **Backblaze B2** with a SHA-256 provenance
@@ -22,6 +19,13 @@ Per-app identity is carried in `Pipeline(name="comic-storyboard-b2")` and writte
 into every manifest.
 
 > New to Backblaze B2 Cloud Storage? Start here: <https://blze.ai/storage>
+
+## What it looks like
+
+**Generate**
+![Generate view](docs/images/screenshot-generate.png)
+**Panels View**
+![Panels view](docs/images/screenshot-panels.png)
 
 ## What it does
 
