@@ -1,5 +1,8 @@
 # comic-storyboard-b2
 
+![Generate view](docs/images/screenshot-generate.png)
+![Panels view](docs/images/screenshot-panels.png)
+
 Describe a story in a sentence or two and get back a multi-panel comic /
 storyboard whose characters and settings stay consistent across panels — every
 generated frame persisted durably to **Backblaze B2** with a SHA-256 provenance

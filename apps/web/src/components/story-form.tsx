@@ -33,7 +33,7 @@ export function StoryForm({
           reference sheet anchors every panel for character consistency.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-6">
         <Textarea
           value={idea}
           onChange={(e) => setIdea(e.target.value)}

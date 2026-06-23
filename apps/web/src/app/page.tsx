@@ -10,10 +10,124 @@ import {
 } from "@/lib/api";
 import { StoryForm } from "@/components/story-form";
 import { StoryboardGrid } from "@/components/storyboard-grid";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { GeneratingLoader } from "@/components/ui/generating-loader";
 import { BookOpen } from "lucide-react";
+
+const MOCK_PANELS = [
+  {
+    label: "Hero reference",
+    caption: "Character sheet — lighthouse keeper, weathered coat, lantern in hand",
+    gradient: "linear-gradient(135deg, #1a2744 0%, #0f3460 50%, #16213e 100%)",
+    accent: "#4493f8",
+    tag: "reference",
+  },
+  {
+    label: "Panel 1",
+    caption: "The keeper climbs the spiral stairs at dusk, wind howling outside",
+    gradient: "linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%)",
+    accent: "#7c3aed",
+    tag: "panel",
+  },
+  {
+    label: "Panel 2",
+    caption: "A storm-petrel crashes against the lantern glass — their eyes meet",
+    gradient: "linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #0a1628 100%)",
+    accent: "#06b6d4",
+    tag: "panel",
+  },
+  {
+    label: "Panel 3",
+    caption: "The keeper cradles the injured bird gently beside the warm light",
+    gradient: "linear-gradient(135deg, #1c1917 0%, #292524 50%, #44403c 100%)",
+    accent: "#f59e0b",
+    tag: "panel",
+  },
+  {
+    label: "Panel 4",
+    caption: "Morning — the petrel perches on the railing, ready to fly free",
+    gradient: "linear-gradient(135deg, #0c2340 0%, #1e3a5f 40%, #e8b86d22 100%)",
+    accent: "#f0a500",
+    tag: "panel",
+  },
+];
+
+function MockStoryboard() {
+  return (
+    <div className="space-y-4 opacity-80">
+      {/* Run header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground font-mono">
+            run a3f9e12b
+          </span>
+          <span className="text-xs text-muted-foreground">
+            A lonely lighthouse keeper befriends a storm-petrel
+          </span>
+        </div>
+        <span className="text-xs px-2 py-1 rounded border border-border text-muted-foreground cursor-not-allowed select-none">
+          Export strip
+        </span>
+      </div>
+
+      {/* Panel grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {MOCK_PANELS.map((panel, i) => (
+          <div
+            key={i}
+            className="rounded-xl overflow-hidden border border-border"
+            style={{ background: "#151b23" }}
+          >
+            {/* Image area */}
+            <div
+              style={{
+                height: 180,
+                background: panel.gradient,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+              }}
+            >
+              {/* Simulated comic lines */}
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 28px, ${panel.accent}18 28px, ${panel.accent}18 29px)`,
+              }} />
+              <div style={{
+                position: "relative",
+                width: 48, height: 48, borderRadius: "50%",
+                background: panel.accent + "33",
+                border: `2px solid ${panel.accent}66`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <BookOpen size={20} color={panel.accent} />
+              </div>
+            </div>
+
+            {/* Card footer */}
+            <div className="p-3 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold" style={{ color: panel.accent }}>{panel.label}</span>
+                {i > 0 && (
+                  <span className="text-[10px] text-muted-foreground border border-border rounded px-1.5 py-0.5 cursor-not-allowed">
+                    Regenerate
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{panel.caption}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Provenance: every asset above carries a SHA-256 manifest from Genblaze.
+        Manifest hash <code className="font-mono">a3f9e12b4c7d8e2f…</code>
+      </p>
+    </div>
+  );
+}
 
 export default function Home() {
   const [result, setResult] = useState<StoryboardResponse | null>(null);
@@ -69,14 +183,14 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 space-y-8">
-      <header className="space-y-1">
-        <h1 className="font-display text-3xl">Comic Storyboard</h1>
+    <div className="mx-auto max-w-5xl px-6 py-8 space-y-6">
+      <div className="space-y-1">
+        <h1 className="font-display text-2xl font-semibold">Generate a Storyboard</h1>
         <p className="text-sm text-muted-foreground">
           A sentence in, a character-consistent comic out — generated with
           Genblaze and persisted to Backblaze B2.
         </p>
-      </header>
+      </div>
 
       <StoryForm onSubmit={generate} pending={pending} />
 
@@ -101,13 +215,7 @@ export default function Home() {
         />
       )}
 
-      {!pending && !error && !result && (
-        <EmptyState
-          icon={BookOpen}
-          title="No storyboard yet"
-          description="Describe a story above to generate your first set of panels."
-        />
-      )}
-    </main>
+      {!pending && !error && !result && <MockStoryboard />}
+    </div>
   );
 }
