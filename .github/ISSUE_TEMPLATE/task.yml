@@ -1,14 +1,14 @@
 name: Implementation task
-description: File a scoped task for the scheduled implementation workflow.
+description: File a scoped task for maintainer review.
 title: "[Task]: "
-labels:
-  - help wanted
 body:
   - type: markdown
     attributes:
       value: |
-        Use this template for issues that are ready for an implementation PR.
-        Leave the issue unassigned when it should be eligible for the scheduled workflow.
+        Use this template to propose work for maintainer review.
+        This form does not make an issue ready for automated implementation.
+        A maintainer must review the issue and apply the dedicated `codex-ready`
+        readiness label before any scheduled workflow may pick it up.
   - type: textarea
     id: problem
     attributes:
