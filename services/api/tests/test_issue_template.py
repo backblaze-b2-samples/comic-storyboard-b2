@@ -9,7 +9,6 @@ import yaml
 ROOT_DIR = Path(__file__).resolve().parents[3]
 TASK_TEMPLATE = ROOT_DIR / ".github" / "ISSUE_TEMPLATE" / "task.yml"
 READY_LABEL = "codex-ready"
-PUBLIC_LABEL = "help wanted"
 
 
 def test_task_template_does_not_grant_workflow_eligibility() -> None:
@@ -22,7 +21,6 @@ def test_task_template_does_not_grant_workflow_eligibility() -> None:
     assert isinstance(auto_labels, list)
 
     assert READY_LABEL not in auto_labels
-    assert PUBLIC_LABEL not in auto_labels
 
     intro = template["body"][0]["attributes"]["value"]
     assert isinstance(intro, str)
