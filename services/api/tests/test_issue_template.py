@@ -16,9 +16,11 @@ def test_task_template_does_not_grant_workflow_eligibility() -> None:
     """Issues created from the public form must still need maintainer review."""
     text = TASK_TEMPLATE.read_text(encoding="utf-8")
     template = yaml.safe_load(text)
-    auto_labels = template.get("labels") or []
+    assert isinstance(template, dict)
 
-    assert "labels" not in template
+    auto_labels = template.get("labels") or []
+    assert isinstance(auto_labels, list)
+
     assert READY_LABEL not in auto_labels
     assert PUBLIC_LABEL not in auto_labels
     assert "unassigned when it should be eligible" not in text.lower()
