@@ -23,5 +23,9 @@ def test_task_template_does_not_grant_workflow_eligibility() -> None:
 
     assert READY_LABEL not in auto_labels
     assert PUBLIC_LABEL not in auto_labels
-    assert "maintainer must review" in text.lower()
-    assert READY_LABEL in text
+
+    intro = template["body"][0]["attributes"]["value"]
+    assert isinstance(intro, str)
+    intro_text = " ".join(intro.lower().split())
+    assert "maintainer must review" in intro_text
+    assert READY_LABEL in intro
