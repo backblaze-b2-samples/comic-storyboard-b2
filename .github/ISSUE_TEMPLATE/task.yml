@@ -1,0 +1,46 @@
+name: Implementation task
+description: File a scoped task for the scheduled implementation workflow.
+title: "[Task]: "
+labels:
+  - help wanted
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for issues that are ready for an implementation PR.
+        Leave the issue unassigned when it should be eligible for the scheduled workflow.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the bug, feature, or maintenance task.
+      placeholder: What needs to change?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List the observable requirements for a complete fix.
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation notes
+      description: Optional constraints, files, or approaches to consider.
+    validations:
+      required: false
+  - type: textarea
+    id: tests
+    attributes:
+      label: Suggested checks
+      description: Commands or manual checks that should pass before opening the PR.
+      placeholder: |
+        cd services/api && uv run pytest -q
+        cd apps/web && npm run typecheck
+    validations:
+      required: false
