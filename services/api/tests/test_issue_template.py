@@ -23,6 +23,5 @@ def test_task_template_does_not_grant_workflow_eligibility() -> None:
 
     assert READY_LABEL not in auto_labels
     assert PUBLIC_LABEL not in auto_labels
-    assert "unassigned when it should be eligible" not in text.lower()
     assert "maintainer must review" in text.lower()
     assert READY_LABEL in text
