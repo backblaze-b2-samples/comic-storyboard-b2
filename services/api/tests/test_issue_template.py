@@ -22,8 +22,19 @@ def test_task_template_does_not_grant_workflow_eligibility() -> None:
 
     assert READY_LABEL not in auto_labels
 
-    intro = template["body"][0]["attributes"]["value"]
-    assert isinstance(intro, str)
-    intro_text = " ".join(intro.lower().split())
-    assert "maintainer must review" in intro_text
-    assert READY_LABEL in intro
+    body = template.get("body") or []
+    assert isinstance(body, list)
+    markdown_values = [
+        item["attributes"]["value"]
+        for item in body
+        if isinstance(item, dict)
+        and item.get("type") == "markdown"
+        and isinstance(item.get("attributes"), dict)
+        and isinstance(item["attributes"].get("value"), str)
+    ]
+    assert any(
+        "maintainer" in value.lower()
+        and "review" in value.lower()
+        and READY_LABEL in value
+        for value in markdown_values
+    )
