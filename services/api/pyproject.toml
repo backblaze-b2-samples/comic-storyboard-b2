@@ -16,7 +16,7 @@ dependencies = [
     # API surface
     "fastapi>=0.110",
     "uvicorn[standard]>=0.29",
-    "pydantic-settings>=2.0",
+    "pydantic-settings>=2.14.2",
     # Strip export — compose panels fetched from their durable public B2 URLs.
     "pillow>=10.0",
     "httpx>=0.24",
