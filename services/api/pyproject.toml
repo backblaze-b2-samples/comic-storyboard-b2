@@ -18,7 +18,7 @@ dependencies = [
     "uvicorn[standard]>=0.29",
     "pydantic-settings>=2.0",
     # Strip export — compose panels fetched from their durable public B2 URLs.
-    "pillow>=10.0",
+    "pillow>=12.3.0",
     "httpx>=0.24",
 ]
 

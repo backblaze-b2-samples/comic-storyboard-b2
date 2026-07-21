@@ -20,7 +20,7 @@ idna==3.18
 jiter==0.15.0
 jmespath==1.1.0
 packaging==26.2
-pillow==12.2.0
+pillow==12.3.0
 pydantic==2.13.4
 pydantic-core==2.46.4
 pydantic-settings==2.14.1
