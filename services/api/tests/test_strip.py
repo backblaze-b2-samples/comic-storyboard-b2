@@ -18,6 +18,8 @@ def test_validate_panel_url_allows_public_b2_https_url() -> None:
         "https://example.com/panel.png",
         "https://127.0.0.1/panel.png",
         "https://user:pass@f005.backblazeb2.com/file/demo-bucket/panel.png",
+        "https://@f005.backblazeb2.com/file/demo-bucket/panel.png",
+        "https://f005.backblazeb2.com:abc/file/demo-bucket/panel.png",
         "/file/demo-bucket/panel.png",
     ],
 )

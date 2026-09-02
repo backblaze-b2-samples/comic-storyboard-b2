@@ -24,14 +24,17 @@ _B2_PUBLIC_HOST = "backblazeb2.com"
 def _validate_panel_url(url: str) -> str:
     parsed = urlparse(url)
     hostname = parsed.hostname
-    port = parsed.port
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("panel URL must be a public Backblaze B2 HTTPS URL") from exc
 
     if (
         parsed.scheme != "https"
         or not hostname
         or port is not None
-        or parsed.username
-        or parsed.password
+        or parsed.username is not None
+        or parsed.password is not None
         or (hostname != _B2_PUBLIC_HOST and not hostname.endswith(f".{_B2_PUBLIC_HOST}"))
     ):
         raise ValueError("panel URL must be a public Backblaze B2 HTTPS URL")
