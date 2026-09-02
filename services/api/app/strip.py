@@ -11,12 +11,32 @@ documented future extension — see docs/features/strip-export.md.
 from __future__ import annotations
 
 import io
+from urllib.parse import urlparse, urlunparse
 
 import httpx
 from PIL import Image
 
 _GUTTER = 16
 _BG = (255, 255, 255)
+_B2_PUBLIC_HOST = "backblazeb2.com"
+
+
+def _validate_panel_url(url: str) -> str:
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+    port = parsed.port
+
+    if (
+        parsed.scheme != "https"
+        or not hostname
+        or port is not None
+        or parsed.username
+        or parsed.password
+        or (hostname != _B2_PUBLIC_HOST and not hostname.endswith(f".{_B2_PUBLIC_HOST}"))
+    ):
+        raise ValueError("panel URL must be a public Backblaze B2 HTTPS URL")
+
+    return urlunparse(("https", hostname, parsed.path, "", parsed.query, ""))
 
 
 def compose_strip(panel_urls: list[str]) -> bytes:
@@ -27,7 +47,7 @@ def compose_strip(panel_urls: list[str]) -> bytes:
     images: list[Image.Image] = []
     with httpx.Client(timeout=30.0) as client:
         for url in panel_urls:
-            resp = client.get(url)
+            resp = client.get(_validate_panel_url(url))
             resp.raise_for_status()
             images.append(Image.open(io.BytesIO(resp.content)).convert("RGB"))
 
